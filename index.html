@@ -147,9 +147,9 @@
 
       if (window.opener && !window.opener.closed) {
         window.opener.postMessage(
-          { type: 'BOOK_ISBN_SCANNED', isbn: isbn },
-          'https://script.google.com'
-        );
+  { type: 'BOOK_ISBN_SCANNED', isbn: isbn },
+  '*'
+);
 
         status.textContent = 'ISBN sent to your inventory!';
         setTimeout(() => window.close(), 800);
