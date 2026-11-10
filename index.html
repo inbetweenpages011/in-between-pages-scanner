@@ -1,0 +1,166 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>In Between Pages - Barcode Scanner</title>
+
+  <script src="https://unpkg.com/@zxing/browser@0.2.1"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5eee8;
+      color: #49372e;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 480px;
+      margin: 30px auto;
+      background: white;
+      padding: 22px;
+      border-radius: 14px;
+    }
+
+    video {
+      width: 100%;
+      max-height: 350px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-top: 15px;
+    }
+
+    button {
+      background: #604536;
+      color: white;
+      border: none;
+      padding: 13px 18px;
+      border-radius: 8px;
+      margin: 8px 4px;
+      font-size: 15px;
+    }
+
+    input {
+      width: 90%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+      margin: 12px 0;
+    }
+
+    #status {
+      margin: 15px 0;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h2>📚 In Between Pages</h2>
+    <p>Book Barcode Scanner 🤎</p>
+
+    <div id="status">Ready to scan your book.</div>
+
+    <video id="video" playsinline></video>
+
+    <div>
+      <button id="startButton">Start Scanner</button>
+      <button id="stopButton">Stop Scanner</button>
+    </div>
+
+    <p>Or enter the ISBN manually:</p>
+    <input id="isbn" type="text" placeholder="Enter ISBN">
+
+    <br>
+    <button id="sendButton">Send ISBN to Inventory</button>
+  </div>
+
+  <script>
+    const video = document.getElementById('video');
+    const status = document.getElementById('status');
+    const isbnInput = document.getElementById('isbn');
+
+    let scannerControls = null;
+
+    function stopScanner() {
+      if (scannerControls) {
+        scannerControls.stop();
+        scannerControls = null;
+      }
+
+      video.pause();
+      video.srcObject = null;
+      status.textContent = 'Scanner stopped.';
+    }
+
+    async function startScanner() {
+      if (typeof ZXingBrowser === 'undefined') {
+        status.textContent = 'Scanner library could not load. Refresh the page.';
+        return;
+      }
+
+      try {
+        status.textContent = 'Starting camera...';
+
+        const reader = new ZXingBrowser.BrowserMultiFormatReader();
+
+        scannerControls = await reader.decodeFromConstraints(
+          {
+            video: {
+              facingMode: { ideal: 'environment' }
+            }
+          },
+          video,
+          (result, error) => {
+            if (result) {
+              isbnInput.value = result.getText();
+              status.textContent = 'Barcode detected!';
+
+              stopScanner();
+            }
+          }
+        );
+
+        status.textContent = 'Point your camera at the book barcode.';
+      } catch (error) {
+        status.textContent = 'Camera error: ' + error.message;
+      }
+    }
+
+    function sendISBN() {
+      const isbn = isbnInput.value.trim().replace(/[\s-]/g, '');
+
+      if (!isbn) {
+        status.textContent = 'Please scan or enter an ISBN first.';
+        return;
+      }
+
+      if (!/^(97[89]\d{10}|\d{9}[\dX])$/i.test(isbn)) {
+        status.textContent = 'Please enter a valid ISBN-10 or ISBN-13.';
+        return;
+      }
+
+      if (window.opener && !window.opener.closed) {
+        window.opener.postMessage(
+          { type: 'BOOK_ISBN_SCANNED', isbn: isbn },
+          'https://script.google.com'
+        );
+
+        status.textContent = 'ISBN sent to your inventory!';
+        setTimeout(() => window.close(), 800);
+      } else {
+        status.textContent = 'No inventory window found. Keep this ISBN: ' + isbn;
+      }
+    }
+
+    document.getElementById('startButton').addEventListener('click', startScanner);
+    document.getElementById('stopButton').addEventListener('click', stopScanner);
+    document.getElementById('sendButton').addEventListener('click', sendISBN);
+  </script>
+</body>
+</html>
