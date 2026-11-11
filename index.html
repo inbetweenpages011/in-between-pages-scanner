@@ -8,61 +8,124 @@
 
   <script src="https://unpkg.com/@zxing/browser@0.2.1"></script>
 
-  <style>
+
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    background: #DBCEBB;
+    color: #503A26;
+  }
+
+  .container {
+    max-width: 480px;
+    margin: 20px auto;
+    background: #F8F3EC;
+    padding: 24px;
+    border: 1px solid #827454;
+    border-radius: 14px;
+    text-align: center;
+  }
+
+  .brand-logo {
+    width: 140px;
+    max-width: 65%;
+    height: auto;
+    border-radius: 12px;
+    margin-bottom: 12px;
+  }
+
+  h2 {
+    margin: 0 0 18px;
+    font-family: Georgia, serif;
+    color: #503A26;
+  }
+
+  video {
+    display: block;
+    width: 100%;
+    max-height: 350px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin: 12px 0;
+    background: #DBCEBB;
+  }
+
+  button {
+    border: none;
+    padding: 13px 16px;
+    border-radius: 8px;
+    margin: 5px 3px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  #startButton,
+  #sendButton {
+    background: #966F50;
+    color: white;
+  }
+
+  #stopButton {
+    background: #D9B9A1;
+    color: #503A26;
+  }
+
+  input {
+    width: 100%;
+    padding: 13px;
+    border: 1px solid #827454;
+    border-radius: 8px;
+    font-size: 16px;
+    margin: 10px 0;
+    background: white;
+    color: #503A26;
+  }
+
+  #sendButton {
+    width: 100%;
+    margin: 8px 0;
+  }
+
+  #status {
+    margin: 12px 0;
+    font-size: 13px;
+    color: #80674D;
+  }
+
+  @media (max-width: 600px) {
     body {
-      font-family: Arial, sans-serif;
-      background: #f5eee8;
-      color: #49372e;
-      padding: 20px;
-      text-align: center;
+      padding: 12px;
     }
 
     .container {
-      max-width: 480px;
-      margin: 30px auto;
-      background: white;
-      padding: 22px;
-      border-radius: 14px;
+      margin: 10px auto;
+      padding: 18px;
     }
 
-    video {
-      width: 100%;
-      max-height: 350px;
-      object-fit: cover;
-      border-radius: 10px;
-      margin-top: 15px;
+    .brand-logo {
+      width: 120px;
     }
+  }
+</style>
 
-    button {
-      background: #604536;
-      color: white;
-      border: none;
-      padding: 13px 18px;
-      border-radius: 8px;
-      margin: 8px 4px;
-      font-size: 15px;
-    }
-
-    input {
-      width: 90%;
-      padding: 12px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 16px;
-      margin: 12px 0;
-    }
-
-    #status {
-      margin: 15px 0;
-      font-size: 14px;
-    }
-  </style>
 </head>
 
 <body>
   <div class="container">
-    <h2>📚 In Between Pages</h2>
-    <p>Book Barcode Scanner 🤎</p>
+  <img
+  src="https://raw.githubusercontent.com/inbetweenpages011/in-between-pages-scanner/main/in_between_pages.svg"
+  alt="In Between Pages Logo"
+  class="brand-logo"
+>
+
+<h2>Barcode Scanner</h2>
 
     <div id="status">Ready to scan your book.</div>
 
@@ -73,7 +136,6 @@
       <button id="stopButton">Stop Scanner</button>
     </div>
 
-    <p>Or enter the ISBN manually:</p>
     <input id="isbn" type="text" placeholder="Enter ISBN">
 
     <br>
